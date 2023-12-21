@@ -5,6 +5,9 @@ const blogSchema = new mongoose.Schema(
         title:{
             type:String,
         },
+        summary:{
+            type:String
+        },
         content: {
             type: String,
         },
@@ -12,6 +15,9 @@ const blogSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         },
+        img:{
+            type:String,
+        }
     },
     { timestamps: true }
 )

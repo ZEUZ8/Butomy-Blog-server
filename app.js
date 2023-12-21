@@ -14,11 +14,7 @@ const app = express()
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(morgan("dev"));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
-// app.use(cors({
-//     origin: process.env.CORS_ORIGIN || "http://localhost:3000", // Replace with your frontend origin
-//     credentials: true, // Include credentials (cookies, authorization headers) in the CORS request
-//   }));
-  app.use(cors())
+app.use(cors())
 
 
 app.use(express.static("public"));

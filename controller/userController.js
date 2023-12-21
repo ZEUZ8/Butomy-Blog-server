@@ -6,10 +6,8 @@ import mongoose from "mongoose";
 
 
 export const getBlogs = async (req, res, next) => {
-  console.log(' in the function')
     try {
-      const response = await BlogModel.find();
-  
+      const response = await BlogModel.find().sort({ updatedAt: -1 });
       res.status(202).json({ result: response });
     } catch (error) {
       res.status(500).json({ response: error.message });
@@ -20,13 +18,13 @@ export const addBlog = async (req, res, next) => {
   console.log('entered in the addblog')
   try {
     // const id = req.body.id;
-    console.log(req.body,' the res')
-    const { title, content,id } = req.body;
+    const { title, content,id,img ,summary} = req.body;
     const userId = await UserModel.findOne({_id:id});
     const blogDoc = await BlogModel.create({
       author: userId._id,
+      img:img,
       title: title,
-      // summary: summary,
+      summary: summary,
       content: content,
     });
     res.status(201).json({ response: "blog created" ,blogDoc});
@@ -49,7 +47,7 @@ export const getUserBlogs = async (req, res, next) => {
 export const updateSingleBlog = async(req,res,next)=>{
   console.log(' the errror')
   try {
-    const { id,  title, content } = req.body;
+    const { id,  title, content ,summary,img} = req.body;
     let blogId = new mongoose.Types.ObjectId(id);
     // const userId = await UserModel.findOne({ email: req.user.email });
     const updatedBlog = await BlogModel.findOneAndUpdate(
@@ -58,6 +56,8 @@ export const updateSingleBlog = async(req,res,next)=>{
         $set: {
           title: title,
           content: content,
+          summary:summary,
+          img:img
         },
       },
       { new: true } // This option returns the modified document
@@ -67,6 +67,21 @@ export const updateSingleBlog = async(req,res,next)=>{
     res.status(500).json({ response: error.message });
   }
 }
+
+
+export const deleteBlog = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(req.user)
+    let blogId = new mongoose.Types.ObjectId(id);
+    const user = await UserModel.findOne({email:req.user.email});
+    const response = await BlogModel.deleteOne({ _id: blogId });
+    const remainingBlogs = await BlogModel.find({author:user._id})
+    res.status(202).json({ msg: "blog deleted",remainingBlogs });
+  } catch (error) {
+    res.status(500).json({ response: error.message });
+  }
+};
   
 export const login = async (req, res) => {
   try {
